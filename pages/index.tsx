@@ -1,6 +1,7 @@
 import { BsBell, BsBookmark, BsEnvelope, BsTwitter } from "react-icons/bs";
 import { BiHash, BiHomeCircle, BiUser } from "react-icons/bi";
 import FeedCard from "@/components/FeedCard";
+import { GoogleLogin } from "@react-oauth/google";
 
 
 interface SideBarButton {
@@ -66,7 +67,6 @@ export default function Home() {
           <FeedCard />
           <FeedCard />
           <FeedCard />
-
           <FeedCard />
           <FeedCard />
           <FeedCard />
@@ -77,7 +77,13 @@ export default function Home() {
 
           <FeedCard />
         </div>
-        <div className="col-span-3"></div>
+        <div className="col-span-3">
+          <div className="googleSignin p-5 bg-slate-800">
+            <h1 className="my-2 text-xl">New to twitter?</h1>
+            <GoogleLogin onSuccess={(cred) => {console.log(cred)}}/>
+          </div>
+          
+        </div>
       </div>
     </div>
   );
