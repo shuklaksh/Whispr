@@ -1,7 +1,11 @@
-import { BsBell, BsBookmark, BsEnvelope, BsTwitter } from "react-icons/bs";
-import { BiHash, BiHomeCircle, BiUser } from "react-icons/bi";
+import { graphqlClient } from "@/clients/api";
 import FeedCard from "@/components/FeedCard";
-import { GoogleLogin } from "@react-oauth/google";
+import { verifyUserGoogleTokenQuery } from "@/graphQL/query/user";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import { useCallback } from "react";
+import toast from "react-hot-toast";
+import { BiHash, BiHomeCircle, BiUser } from "react-icons/bi";
+import { BsBell, BsBookmark, BsEnvelope, BsTwitter } from "react-icons/bs";
 
 
 interface SideBarButton {
@@ -38,6 +42,22 @@ const sideBarMenu : SideBarButton[] = [
 
 
 export default function Home() {
+
+  const handleGoogleToken = useCallback(async (creds: CredentialResponse) => {
+    const googleToken = creds.credential;
+    if(!googleToken) {
+      toast.error("Inavlid ID")
+      return;
+    }
+    const { verifyGoogleToken } = await graphqlClient.request(verifyUserGoogleTokenQuery,{token: googleToken })
+    if(verifyGoogleToken) {
+      window.localStorage.setItem("AuthToken", verifyGoogleToken);
+      toast.success("User verified");
+
+    } 
+    else toast.error("Unable to verify user");
+  },[]) 
+
   return (
     <div>
       <div className="grid grid-cols-12 px-52 w-screen h-screen">
@@ -80,7 +100,7 @@ export default function Home() {
         <div className="col-span-3">
           <div className="googleSignin p-5 bg-slate-800">
             <h1 className="my-2 text-xl">New to twitter?</h1>
-            <GoogleLogin onSuccess={(cred) => {console.log(cred)}}/>
+            <GoogleLogin onSuccess={handleGoogleToken}/>
           </div>
           
         </div>
