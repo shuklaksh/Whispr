@@ -27,17 +27,14 @@ function FeedCard(props: FeedCardProps) {
                 <div>
                   <RxAvatar
                     className="icon"
-                    style={{
-                     
-                    }}
                     size="30px"
                     color="white"
-                  />{" "}
+                  />
                 </div>
               )}
         </div>
-        <div className="col-span-11  ">
-          <h5 className='w-full'>{data.author.firstName + " " + data.author.lastName}</h5>
+        <div className="col-span-11 ml-4 sm:ml-2">
+          <h5 className='w-full'>{data?.author?.firstName + " " + data?.author?.lastName}</h5>
           <p>{data.content}</p>
           <div className="postBtns flex justify-between mt-5 text-xl text-center w-[90%]">
             <div>
