@@ -4,12 +4,15 @@ import { verifyUserGoogleTokenQuery } from "@/graphQL/query/user";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { useQueryClient } from "@tanstack/react-query";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
-import { BiHash, BiHomeCircle, BiUser } from "react-icons/bi";
+import { BiHash, BiHomeCircle, BiSolidImageAdd, BiUser } from "react-icons/bi";
 import { BsBell, BsBookmark, BsEnvelope, BsTwitter } from "react-icons/bs";
 import Image from "next/image";
 import { RxAvatar } from "react-icons/rx";
+import { useGetTweets } from "@/hooks/useGetTweets";
+import { Tweet } from "@/gql/graphql";
+import { useCreateTweet } from "@/hooks/useCreateTweet";
 
 interface SideBarButton {
   title: string;
@@ -45,6 +48,23 @@ const sideBarMenu: SideBarButton[] = [
 export default function Home() {
   const queryClient = useQueryClient();
   const { user } = useCurrentUser();
+  const {tweets} = useGetTweets();
+  const {mutate} = useCreateTweet();
+  const [content,setContent] = useState('');
+
+  const handleAddImage = useCallback(()=> {
+    const input = document.createElement('input');
+    input.setAttribute("type","file");
+    input.setAttribute("accept","image/*");
+    input.click();
+  },[])
+
+  const handleAddTweet = useCallback(() => {
+    mutate({
+      content: content
+    })
+    setContent('');
+  },[content, mutate])
 
   const handleGoogleToken = useCallback(async (creds: CredentialResponse) => {
     const googleToken = creds.credential;
@@ -61,6 +81,7 @@ export default function Home() {
       toast.success("User verified");
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     } else toast.error("Unable to verify user");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -119,21 +140,55 @@ export default function Home() {
           </div>
         </div>
         <div className="col-span-6 border-r-[0.2px] border-l-[0.2px] border-gray-600 h-screen overflow-scroll no-scrollbar">
-          <FeedCard />
-          <FeedCard />
-          <FeedCard />
-          <FeedCard />
-          <FeedCard />
-          <FeedCard />
-          <FeedCard />
-          <FeedCard />
-          <FeedCard />
-          <FeedCard />
-          <FeedCard />
-          <FeedCard />
-          <FeedCard />
-
-          <FeedCard />
+          <div className='border-t border-gray-600 p-5 hover:bg-gray-900 transition-all cursor-pointer'>
+            <div className="grid grid-cols-12 gap-3">
+            <div className="col-span-1">
+            {user && user.profileImageUrl ? (
+                <Image
+                  className="rounded-full"
+                  src={user?.profileImageUrl}
+                  alt="user-image"
+                  height={50}
+                  width={50}
+                />
+              ) : (
+                <div>
+                  <RxAvatar
+                    className="icon"
+                    style={{
+                     
+                    }}
+                    size="30px"
+                    color="white"
+                  />{" "}
+                </div>
+              )}
+        </div>
+        <div className="col-span-11  ">
+          <textarea 
+          value={content}
+          className="w-full bg-transparent px-4 py-1 border-b border-slate-800 text-lg" 
+          rows={4}
+          placeholder="What's happening?"
+          onChange={(e) => setContent(e.target.value)}
+          />
+          <div className=" flex items-center justify-between mt-2">
+          <BiSolidImageAdd onClick={handleAddImage}/>
+          <button 
+            className="bg-[#1d9bf0] rounded-full py-0.5 px-3 text-sm"
+            onClick={handleAddTweet}
+            >
+                Whispr
+          </button>
+          </div>
+        </div>
+            </div>
+          </div>
+          {
+          tweets?.map(tweet => 
+            <FeedCard key={tweet?.id} data={tweet as Tweet}/>
+          )
+          }
         </div>
         {!user && (
           <div className="col-span-3">
