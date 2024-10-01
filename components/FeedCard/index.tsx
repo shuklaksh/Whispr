@@ -36,6 +36,7 @@ function FeedCard(props: FeedCardProps) {
         <div className="col-span-11 ml-4 sm:ml-2">
           <h5 className='w-full'>{data?.author?.firstName + " " + data?.author?.lastName}</h5>
           <p>{data.content}</p>
+          {data.imageURL && <Image src={data?.imageURL} alt="tweet-image" width={300} height={300}/>}
           <div className="postBtns flex justify-between mt-5 text-xl text-center w-[90%]">
             <div>
               <BiMessageRounded />

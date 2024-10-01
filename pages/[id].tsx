@@ -11,7 +11,7 @@ const UserProfilePage = () => {
   const router = useRouter();
   const {user} = useGetUserById({id: router?.query?.id as string})
  
-  return (
+  return    (
     <div>
       <MainScreenLayout>
         <div>
