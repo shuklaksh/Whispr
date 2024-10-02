@@ -35,6 +35,7 @@ export const getUserByIdQuery = graphql(`
         author {
           firstName
           lastName
+          email
           profileImageUrl
         }
       }

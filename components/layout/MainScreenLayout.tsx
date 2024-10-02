@@ -23,7 +23,7 @@ interface TwitterlayoutProps {
   children: React.ReactNode;
 }
 
-const Twitterlayout: React.FC<TwitterlayoutProps> = (props) => {
+const MainScreenLayout: React.FC<TwitterlayoutProps> = (props) => {
   const { user } = useCurrentUser();
   const queryClient = useQueryClient();
 
@@ -165,4 +165,4 @@ const Twitterlayout: React.FC<TwitterlayoutProps> = (props) => {
   );
 };
 
-export default Twitterlayout;
+export default MainScreenLayout;

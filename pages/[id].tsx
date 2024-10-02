@@ -19,7 +19,7 @@ const UserProfilePage = () => {
             <BsArrowLeftShort className="text-3xl" />
             <div className="p-2">
               <h1 className="text-lg font-bold">{user?.firstName + " " + user?.lastName}</h1>
-              <h1 className="text-md font-bold text-slate-500">{user?.tweets?.length}</h1>
+              <h1 className="text-md font-bold text-slate-500">{user?.tweets?.length} Whispr</h1>
             </div>
           </nav>
           <div className="pt-6 p-4 border-b border-slate-600 flex items-center gap-4">
