@@ -11,6 +11,7 @@ export const getAllTweetsQuery = graphql(`
       author {
         firstName
         lastName
+        email
         profileImageUrl
       }
     }

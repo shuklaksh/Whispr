@@ -84,12 +84,12 @@ const Twitterlayout: React.FC<TwitterlayoutProps> = (props) => {
       );
 
       toast.success("Verified Success");
-      console.log(verifyGoogleToken);
 
       if (verifyGoogleToken)
-        window.localStorage.setItem("__twitter_token", verifyGoogleToken);
+        window.localStorage.setItem("AuthToken", verifyGoogleToken);
 
       await queryClient.invalidateQueries({queryKey: ["curentUser"]});
+      location.reload(); //temporary
     },
     [queryClient]
   );
@@ -149,7 +149,7 @@ const Twitterlayout: React.FC<TwitterlayoutProps> = (props) => {
               )}
             </div>
         </div>
-        <div className="col-span-10 sm:col-span-5 border-r-[1px] border-l-[1px] h-screen overflow-scroll no-scrollbar border-gray-600">
+        <div className="col-span-10 sm:col-span-6 border-r-[1px] border-l-[1px] h-screen overflow-scroll no-scrollbar border-gray-600">
           {props.children}
         </div>
         <div className="col-span-0 sm:col-span-3 p-5">
