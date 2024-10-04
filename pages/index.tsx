@@ -74,6 +74,7 @@ export default function Home() {
     });
     setContent('');
     setImage('');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content, mutate]);
 
   return (
@@ -129,7 +130,7 @@ export default function Home() {
         </div>
         {
           tweets?.map(tweet => 
-            <FeedCard key={tweet?.id} data={tweet as Tweet} />
+            <FeedCard key={tweet?.id} userId={tweet?.author?.id} data={tweet as Tweet} />
           )
         }
       </MainScreenLayout>

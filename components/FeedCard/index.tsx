@@ -1,5 +1,6 @@
 import { Tweet } from "@/gql/graphql";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 import { AiOutlineHeart, AiOutlineRetweet } from "react-icons/ai";
 import { BiMessageRounded, BiUpload } from "react-icons/bi";
@@ -7,10 +8,11 @@ import { RxAvatar } from "react-icons/rx";
 
 interface FeedCardProps {
   data: Tweet;
+  userId?: string;
 }
 
 function FeedCard(props: FeedCardProps) {
-  const { data } = props;
+  const { data, userId } = props;
   return (
     <div className="border-t border-gray-600 p-5 hover:bg-gray-900 transition-all cursor-pointer">
       <div className="grid grid-cols-12 gap-3 items-start">
@@ -30,14 +32,14 @@ function FeedCard(props: FeedCardProps) {
           )}
         </div>
         <div className="col-span-11 ml-4 sm:ml-2">
-          <div className="leading-3">
+        <Link href={`/${userId}`} className="leading-3">
             <h5 className="w-full text-md text-slate-300">
               {data?.author?.firstName + " " + data?.author?.lastName}
             </h5>
             <p className="w-full text-sm text-slate-500">
               {"@" + data?.author?.email}
             </p>
-          </div>
+          </Link>
 
           <div className="mt-2 pl-1">
             <p>{data.content}</p>
