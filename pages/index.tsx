@@ -16,6 +16,7 @@ import { RxAvatar } from "react-icons/rx";
 
 export default function Home() {
   const { user } = useCurrentUser();
+  console.log(user)
   const { tweets } = useGetTweets();
   const { mutate } = useCreateTweet();
 
@@ -53,6 +54,7 @@ export default function Home() {
 
   const handleCreateTweet = useCallback(async() => {
     let uploadedImageUrl = null;
+    console.log(imageType,"imageType")
     if(imageType) {
       const {getSignedURL} = await graphqlClient.request(getSignedUrlQuery,{
         imageType: imageType
