@@ -1,12 +1,10 @@
-import { graphqlClient } from "@/clients/api";
 import FeedCard from "@/components/FeedCard";
 import MainScreenLayout from "@/components/layout/MainScreenLayout";
 import { Tweet } from "@/gql/graphql";
-import { getSignedUrlQuery } from "@/graphQL/query/tweet";
 import { useCreateTweet } from "@/hooks/tweets/useCreateTweet";
 import { useGetTweets } from "@/hooks/tweets/useGetTweets";
 import { useCurrentUser } from "@/hooks/user/useCurrentUser";
-import axios from "axios";
+import { supabase } from "@/supabase";
 import Image from "next/image";
 import { useCallback, useState } from "react";
 import { BiImageAlt } from "react-icons/bi";
@@ -22,7 +20,6 @@ export default function Home() {
 
   const [content, setContent] = useState("");
   const [image, setImage] = useState<string>("");
-  const [imageType, setImageType] = useState<string>("");
   const [bucketImage,setBucketImage] = useState<File | null>(null);
 
   const handleImageChange = (input: HTMLInputElement) => {
@@ -33,13 +30,6 @@ export default function Home() {
       reader.onloadend = () => {
         setImage(reader.result as string);
       };
-      const prefix = "image/";
-      let type = file.type;
-  
-    if (file.type.startsWith(prefix)) {
-      type =  file.type.slice(prefix.length);
-  }
-      setImageType(type);
       reader.readAsDataURL(file);
     }
     }
@@ -52,32 +42,56 @@ export default function Home() {
     input.click();
   }, []);
 
-  const handleCreateTweet = useCallback(async() => {
-    let uploadedImageUrl = null;
-    console.log(imageType,"imageType")
-    if(imageType) {
-      const {getSignedURL} = await graphqlClient.request(getSignedUrlQuery,{
-        imageType: imageType
-      })
-      if(getSignedURL) {
-        await axios.put(getSignedURL,bucketImage, {
-          headers: {
-            'Content-type': imageType
-          }
-        })
-        const url = new URL(getSignedURL);
-        uploadedImageUrl = `${url.origin}${url.pathname}`;
-      }
+  async function uploadImageToBucket(file: File) {
+    try {
+        const bucketName = 'images'; // bucket name
+        const filePath = `uploads/${file.name}`; // Folder + file name
+
+        // Upload the file
+        const { data, error } = await supabase.storage
+            .from(bucketName)
+            .upload(filePath, file, {
+                upsert: false,
+                headers: {
+                  Authorization: `Bearer ${window.localStorage.getItem("AuthToken")}`,
+                },
+                
+            });
+
+        if (error) {
+            throw error;
+        }
+
+        console.log('File uploaded successfully:', data);
+
+        // Generate public URL
+        const publicUrl = supabase.storage.from(bucketName).getPublicUrl(filePath).data.publicUrl;
+        console.log('Public URL:', publicUrl);
+
+        return publicUrl; // Return the public URL
+    } catch (error) {
+        console.error('Error uploading image');
+        throw error;
     }
-    
+}
+
+  const handleCreateTweet = useCallback(async () => {
+    let uploadedImageUrl = null;
+
+    // Request signed URL from the server
+    if (bucketImage) {
+         uploadedImageUrl = await uploadImageToBucket(bucketImage)
+    }
+
+    // Create the tweet
     mutate({
       content,
-      imageURL: uploadedImageUrl
+      imageURL: uploadedImageUrl,
     });
+
     setContent('');
     setImage('');
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content, mutate]);
+  }, [content, mutate, bucketImage]);
 
   return (
     <div>
