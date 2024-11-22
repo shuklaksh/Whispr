@@ -76,14 +76,13 @@ const MainScreenLayout: React.FC<TwitterlayoutProps> = (props) => {
   const handleLoginWithGoogle = useCallback(
     async (cred: CredentialResponse) => {
       const googleToken = cred.credential;
-      console.log(googleToken,"googleToken")
       if (!googleToken) return toast.error(`Google token not found`);
-
+      const toastId = toast.loading('Verifying...');
       const { verifyGoogleToken } = await graphqlClient.request(
         verifyUserGoogleTokenQuery,
         { token: googleToken }
       );
-
+      toast.dismiss(toastId)
       toast.success("Verified Success");
 
       if (verifyGoogleToken)
@@ -156,7 +155,7 @@ const MainScreenLayout: React.FC<TwitterlayoutProps> = (props) => {
         <div className="col-span-0 sm:col-span-3 p-5">
           {!user && (
             <div className="p-5 bg-slate-700 rounded-lg">
-              <h1 className="my-2 text-2xl">New to Twitter?</h1>
+              <h1 className="my-2 text-center text-xl">New to Whispr?</h1>
               <GoogleLogin onSuccess={handleLoginWithGoogle} />
             </div>
           )}

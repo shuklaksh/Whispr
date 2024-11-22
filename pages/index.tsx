@@ -9,13 +9,13 @@ import Image from "next/image";
 import { useCallback, useState } from "react";
 import { BiImageAlt } from "react-icons/bi";
 import { RxAvatar } from "react-icons/rx";
+import { InfinitySpin } from "react-loader-spinner";
 
 
 
 export default function Home() {
   const { user } = useCurrentUser();
-  console.log(user)
-  const { tweets } = useGetTweets();
+  const { tweets,isLoading } = useGetTweets();
   const { mutate } = useCreateTweet();
 
   const [content, setContent] = useState("");
@@ -124,6 +124,7 @@ export default function Home() {
               </div>
               <div className="col-span-11">
                 <textarea
+                  disabled={user ? false : true}
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
                   className="w-full bg-transparent text-xl px-3 border-b border-slate-700"
@@ -134,8 +135,13 @@ export default function Home() {
                 <div className="mt-2 flex justify-between items-center">
                   <BiImageAlt onClick={handleSelectImage} className="text-xl" />
                   <button
-                    onClick={handleCreateTweet}
-                    className="bg-[#1d9bf0] font-semibold text-sm py-1 px-3 rounded-full"
+                      onClick={handleCreateTweet}
+                      disabled={user ? false : true}
+                      className={`font-semibold text-sm py-1 px-3 rounded-full ${
+                        !user
+                          ? "bg-gray-400 cursor-not-allowed"
+                          : "bg-[#1d9bf0] hover:bg-[#1a8cd8] cursor-pointer"
+                      }`}
                   >
                     Whispr
                   </button>
@@ -145,6 +151,13 @@ export default function Home() {
           </div>
         </div>
         {
+          isLoading ?
+          <div className="h-[50%]  flex justify-center items-center">
+          <InfinitySpin
+          width="200"
+          color="#1d9bf0"
+          />
+          </div> :
           tweets?.map(tweet => 
             <FeedCard key={tweet?.id} userId={tweet?.author?.id} data={tweet as Tweet} />
           )
