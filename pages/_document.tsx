@@ -1,13 +1,29 @@
-import { Html, Head, Main, NextScript } from "next/document";
+import Document, { Html, Head, Main, NextScript } from 'next/document';
 
-export default function Document() {
-  return (
-    <Html lang="en">
-      <Head />
-      <body className="antialiased">
-        <Main />
-        <NextScript />
-      </body>
-    </Html>
-  );
+class MyDocument extends Document {
+  render() {
+    return (
+      <Html lang="en">
+        <Head>
+          {/* Favicon */}
+          <link rel="icon" href="/favicon.ico" />
+          
+          {/* You can also include other favicons, such as PNG or SVG */}
+          <link rel="icon" type="image/png" href="/favicon.png" />
+          
+          {/* Meta Tags */}
+          <meta name="description" content="Your web app description" />
+          
+          {/* Title can be set globally here */}
+          <title>Whispr</title>
+        </Head>
+        <body>
+          <Main />
+          <NextScript />
+        </body>
+      </Html>
+    );
+  }
 }
+
+export default MyDocument;
